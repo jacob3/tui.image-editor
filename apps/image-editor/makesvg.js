@@ -15,7 +15,7 @@ function getFileList(dir) {
       const svg = fs.readFileSync(`${targetDir}/${file}`);
       sprites.add(id, svg);
     });
-    fs.writeFileSync(`./dist/svg/${dir}.svg`, sprites);
+    fs.writeFileSync(`./dist/svg/${dir}.svg`, sprites.toString());
   });
 }
 
