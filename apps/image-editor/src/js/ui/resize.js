@@ -203,7 +203,6 @@ class Resize extends Submenu {
    */
   _changeLockAspectRatio(event) {
     this._lockState = event.target.checked;
-    this.actions.lockAspectRatio(this._lockState);
   }
 
   /**

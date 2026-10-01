@@ -36,4 +36,40 @@ describe('Range', () => {
 
     expect(range.value).toBe(0);
   });
+
+  it('should not produce NaN when dragging the pointer while the slider has no measurable width', () => {
+    // Simulates a slider whose container had no rendered width when it was
+    // constructed (e.g. its panel was hidden), which used to make every
+    // subsequent drag resolve to NaN.
+    range.rangeWidth = NaN;
+
+    range.eventHandler.startChangingSlide({ screenX: 0 });
+    range.eventHandler.changeSlide({ screenX: 50 });
+    range.eventHandler.stopChangingSlide();
+
+    expect(range.value).not.toBeNaN();
+    expect(input.value).not.toBe('NaN');
+  });
+
+  it('should not produce NaN when clicking the slider track while it has no measurable width', () => {
+    range.rangeWidth = NaN;
+
+    range.eventHandler.changeSlideFinally({
+      stopPropagation: jest.fn(),
+      target: { className: 'tui-image-editor-range' },
+      offsetX: 50,
+    });
+
+    expect(range.value).not.toBeNaN();
+    expect(input.value).not.toBe('NaN');
+  });
+
+  it('should ignore a non-finite max value instead of corrupting the range', () => {
+    const { min } = range;
+
+    range.max = undefined;
+
+    expect(range.max).not.toBeUndefined();
+    expect(range.min).toBe(min);
+  });
 });

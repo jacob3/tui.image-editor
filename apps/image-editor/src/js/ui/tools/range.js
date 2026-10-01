@@ -53,7 +53,7 @@ class Range {
     this._addClickEvent();
     this._addDragEvent();
     this._addInputEvent();
-    this.value = options.value;
+    this.value = options.value || 0;
     this.trigger('change');
   }
 
@@ -79,6 +79,9 @@ class Range {
    * @param {number} maxValue - max value
    */
   set max(maxValue) {
+    if (!isFinite(maxValue)) {
+      return;
+    }
     this._max = maxValue;
     this._absMax = this._min * -1 + this._max;
     this.value = this._value;
@@ -93,6 +96,9 @@ class Range {
    * @param {number} minValue - min value
    */
   set min(minValue) {
+    if (!isFinite(minValue)) {
+      return;
+    }
     this._min = minValue;
     this.max = this._max;
   }
@@ -111,16 +117,20 @@ class Range {
    */
   set value(value) {
     value = this._useDecimal ? value : toInteger(value);
+    if (isNaN(value)) {
+      value = this._min;
+    }
 
+    const rangeWidth = this.rangeWidth || 0;
     const absValue = value - this._min;
-    let leftPosition = (absValue * this.rangeWidth) / this._absMax;
+    let leftPosition = this._absMax ? (absValue * rangeWidth) / this._absMax : 0;
 
-    if (this.rangeWidth < leftPosition) {
-      leftPosition = this.rangeWidth;
+    if (isNaN(leftPosition) || rangeWidth < leftPosition) {
+      leftPosition = rangeWidth;
     }
 
     this.pointer.style.left = `${leftPosition}px`;
-    this.subbar.style.right = `${this.rangeWidth - leftPosition}px`;
+    this.subbar.style.right = `${rangeWidth - leftPosition}px`;
 
     this._value = value;
     if (this.rangeInputElement) {
@@ -327,7 +337,7 @@ class Range {
     this.pointer.style.left = `${touchPx}px`;
     this.subbar.style.right = `${this.rangeWidth - touchPx}px`;
 
-    const ratio = touchPx / this.rangeWidth;
+    const ratio = this.rangeWidth ? touchPx / this.rangeWidth : 0;
     const resultValue = this._absMax * ratio + this._min;
     const value = this._useDecimal ? resultValue : toInteger(resultValue);
     const isValueChanged = this.value !== value;
@@ -345,8 +355,10 @@ class Range {
     if (event.target.className !== 'tui-image-editor-range') {
       return;
     }
+    this.rangeWidth = this._getRangeWidth();
+
     const touchPx = event.offsetX;
-    const ratio = touchPx / this.rangeWidth;
+    const ratio = this.rangeWidth ? touchPx / this.rangeWidth : 0;
     const value = this._absMax * ratio + this._min;
     this.pointer.style.left = `${ratio * this.rangeWidth}px`;
     this.subbar.style.right = `${(1 - ratio) * this.rangeWidth}px`;
@@ -356,6 +368,7 @@ class Range {
   }
 
   _startChangingSlide(event) {
+    this.rangeWidth = this._getRangeWidth();
     this.firstPosition = event.screenX;
     this.firstLeft = toInteger(this.pointer.style.left) || 0;
 
