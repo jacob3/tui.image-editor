@@ -1,6 +1,6 @@
 {
   "name": "@jacob3/tui-image-editor",
-  "version": "3.15.5",
+  "version": "3.15.6",
   "description": "TOAST UI ImageEditor (fork with range slider NaN fix and shape stroke-width-on-scale fix)",
   "keywords": [
     "nhn",
@@ -13,6 +13,7 @@
     "fabric"
   ],
   "main": "dist/tui-image-editor.js",
+  "types": "index.d.ts",
   "files": [
     "src",
     "dist",

@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Image Editor v3.15.5
+// Type definitions for TOAST UI Image Editor v3.15.6
 // TypeScript Version: 3.2.2
 
 declare namespace tuiImageEditor {
@@ -261,7 +261,7 @@ declare namespace tuiImageEditor {
   }
 
   class ImageEditor {
-    constructor(wrapper: string | Element, options: IOptions);
+    constructor(wrapper: string | Element, options?: IOptions);
     public ui: UI;
 
     public addIcon(type: string, options?: IIconOptions): Promise<IObjectProps>;
@@ -306,7 +306,7 @@ declare namespace tuiImageEditor {
     public isEmptyUndoStack(): boolean;
     public loadImageFromFile(imgFile: File, imageName?: string): Promise<ICropResolveObject>;
     public loadImageFromURL(url: string, imageName?: string): Promise<ICropResolveObject>;
-    public redo(iterationCount: number): Promise<any>;
+    public redo(iterationCount?: number): Promise<any>;
     public registerIcons(infos: IIconInfo): void;
     public removeActiveObject(): void;
     public removeFilter(type?: string): Promise<IFilterResolveObject>;
@@ -324,11 +324,9 @@ declare namespace tuiImageEditor {
     public startDrawingMode(mode: string, option?: { width?: number; color?: string }): boolean;
     public stopDrawingMode(): void;
     public toDataURL(options?: IToDataURLOptions): string;
-    public undo(iterationCount: number): Promise<any>;
+    public undo(iterationCount?: number): Promise<any>;
     public on(eventName: string, handler: (...args: any[]) => void): void;
   }
 }
 
-declare module 'tui-image-editor' {
-  export = tuiImageEditor.ImageEditor;
-}
+export = tuiImageEditor.ImageEditor;

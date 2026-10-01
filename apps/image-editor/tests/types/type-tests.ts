@@ -1,4 +1,4 @@
-import ImageEditor = require('tui-image-editor');
+import ImageEditor = require('../../index');
 
 const blackTheme = {
   'common.bi.image': 'https://uicdn.toast.com/toastui/img/tui-image-editor-bi.png',
