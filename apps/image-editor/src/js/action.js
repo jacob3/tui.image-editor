@@ -603,16 +603,6 @@ export default {
       objectScaled: (obj) => {
         if (['i-text', 'text'].indexOf(obj.type) > -1) {
           this.ui.text.fontSize = toInteger(obj.fontSize);
-        } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) >= 0) {
-          const { width, height } = obj;
-          const strokeValue = this.ui.shape.getStrokeValue();
-
-          if (width < strokeValue) {
-            this.ui.shape.setStrokeValue(width);
-          }
-          if (height < strokeValue) {
-            this.ui.shape.setStrokeValue(height);
-          }
         }
       },
       selectionCleared: () => {

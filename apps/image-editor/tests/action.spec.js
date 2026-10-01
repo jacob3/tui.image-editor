@@ -464,13 +464,24 @@ describe('UI', () => {
         expect(imageEditorMock.ui.text.fontSize).toBe(20);
       });
 
-      it('should be changed if objectScaled is for a shape type object and strokeValue is greater than the size of the object', () => {
+      it('should not change the stroke value when a shape is scaled smaller than the stroke width', () => {
         jest.spyOn(imageEditorMock.ui.shape, 'getStrokeValue').mockReturnValue(20);
         const setStrokeValueSpy = jest.spyOn(imageEditorMock.ui.shape, 'setStrokeValue');
 
         imageEditorMock.fire('objectScaled', { type: 'rect', width: 10, height: 10 });
 
-        expect(setStrokeValueSpy).toHaveBeenCalledWith(10);
+        expect(setStrokeValueSpy).not.toHaveBeenCalled();
+      });
+
+      it('should not change the stroke value when a shape briefly passes through a negative width while being flipped by dragging a handle through the opposite side', () => {
+        jest.spyOn(imageEditorMock.ui.shape, 'getStrokeValue').mockReturnValue(30);
+        const setStrokeValueSpy = jest.spyOn(imageEditorMock.ui.shape, 'setStrokeValue');
+
+        imageEditorMock.fire('objectScaled', { type: 'circle', width: 1, height: 1 });
+        imageEditorMock.fire('objectScaled', { type: 'circle', width: -3, height: -3 });
+        imageEditorMock.fire('objectScaled', { type: 'circle', width: 40, height: 40 });
+
+        expect(setStrokeValueSpy).not.toHaveBeenCalled();
       });
     });
 
