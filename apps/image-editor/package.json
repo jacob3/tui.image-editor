@@ -1,6 +1,6 @@
 {
   "name": "@jacob3/tui-image-editor",
-  "version": "3.16.0",
+  "version": "3.16.1",
   "description": "TOAST UI ImageEditor (fork with range slider NaN fix and shape stroke-width-on-scale fix)",
   "keywords": [
     "nhn",

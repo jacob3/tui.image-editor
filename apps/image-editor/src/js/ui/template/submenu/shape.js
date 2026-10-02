@@ -52,5 +52,10 @@ export default ({ locale, makeSvgIcon }) => `
             <div class="tie-stroke-range"></div>
             <input class="tie-stroke-range-value tui-image-editor-range-value" value="0" />
         </li>
+        <li class="tui-image-editor-newline tui-image-editor-range-wrap">
+            <label class="range">${locale.localize('Blur')}</label>
+            <div class="tie-fill-blur-range"></div>
+            <input class="tie-fill-blur-range-value tui-image-editor-range-value" value="0" />
+        </li>
     </ul>
 `;

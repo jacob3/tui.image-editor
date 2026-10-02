@@ -81,4 +81,30 @@ describe('UI Shape - fill blur', () => {
     expect(blurButton.classList.contains('active')).toBe(false);
     expect(shape._els.fillColorpicker.color).toBe('#ff0000');
   });
+
+  describe('blur intensity range', () => {
+    it('should apply the chosen intensity and turn blur on when dragged, even if blur was off', () => {
+      expect(shape.isFillBlur).toBe(false);
+
+      shape._els.fillBlurRange.value = 0.8;
+      shape._els.fillBlurRange.fire('change', 0.8, true);
+
+      expect(shape.isFillBlur).toBe(true);
+      expect(blurButton.classList.contains('active')).toBe(true);
+      expect(actions.changeShape).toHaveBeenLastCalledWith(
+        { fill: { type: 'filter', filter: [{ blur: 0.8 }] } },
+        false
+      );
+    });
+
+    it('should reflect the blur value of an already-blurred shape when it becomes the active object', () => {
+      shape.setShapeStatus({
+        strokeWidth: 3,
+        strokeColor: '#000000',
+        fillColor: { type: 'filter', filter: [{ blur: 0.75 }] },
+      });
+
+      expect(shape._els.fillBlurRange.value).toBe(0.75);
+    });
+  });
 });
