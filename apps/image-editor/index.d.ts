@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Image Editor v3.15.6
+// Type definitions for TOAST UI Image Editor v3.15.7
 // TypeScript Version: 3.2.2
 
 declare namespace tuiImageEditor {
@@ -326,6 +326,19 @@ declare namespace tuiImageEditor {
     public toDataURL(options?: IToDataURLOptions): string;
     public undo(iterationCount?: number): Promise<any>;
     public on(eventName: string, handler: (...args: any[]) => void): void;
+
+    /**
+     * Internal method (not part of the stable public API, may change
+     * without notice). Typed here because this fork has a known
+     * consumer that relies on it to toggle keyboard shortcuts.
+     */
+    public _attachDomEvents(): void;
+    /**
+     * Internal method (not part of the stable public API, may change
+     * without notice). Typed here because this fork has a known
+     * consumer that relies on it to toggle keyboard shortcuts.
+     */
+    public _detachDomEvents(): void;
   }
 }
 
