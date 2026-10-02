@@ -171,6 +171,12 @@ imageEditor.changeShape(0, {
   rx: 10,
   ry: 100,
 });
+imageEditor.changeShape(0, {
+  fill: {
+    type: 'filter',
+    filter: [{ blur: 0.3 }],
+  },
+});
 
 imageEditor.changeText(0, 'change text');
 imageEditor.changeTextStyle(0, {

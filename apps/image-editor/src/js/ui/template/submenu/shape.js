@@ -36,6 +36,17 @@ export default ({ locale, makeSvgIcon }) => `
         <li class="tui-image-editor-partition only-left-right">
             <div></div>
         </li>
+        <li class="tie-fill-blur-button">
+            <div class="tui-image-editor-button blur">
+                <div>
+                    ${makeSvgIcon(['normal', 'active'], 'filter', true)}
+                </div>
+                <label> ${locale.localize('Blur')} </label>
+            </div>
+        </li>
+        <li class="tui-image-editor-partition only-left-right">
+            <div></div>
+        </li>
         <li class="tui-image-editor-newline tui-image-editor-range-wrap">
             <label class="range">${locale.localize('Stroke')}</label>
             <div class="tie-stroke-range"></div>

@@ -4,13 +4,16 @@ import Range from '@/ui/tools/range';
 import Submenu from '@/ui/submenuBase';
 import templateHtml from '@/ui/template/submenu/shape';
 import { toInteger, assignmentForDestroy } from '@/util';
-import { defaultShapeStrokeValues, eventNames, selectorNames } from '@/consts';
+import { defaultShapeStrokeValues, eventNames, selectorNames, SHAPE_FILL_TYPE } from '@/consts';
 
 const SHAPE_DEFAULT_OPTION = {
   stroke: '#ffbb3b',
   fill: '',
   strokeWidth: 3,
 };
+
+// Blur intensity applied to a shape's fill when "Blur" is toggled on.
+const FILL_BLUR_VALUE = 0.3;
 
 /**
  * Shape ui class
@@ -29,10 +32,12 @@ class Shape extends Submenu {
     });
     this.type = null;
     this.options = SHAPE_DEFAULT_OPTION;
+    this.isFillBlur = false;
 
     this._els = {
       shapeSelectButton: this.selector('.tie-shape-button'),
       shapeColorButton: this.selector('.tie-shape-color-button'),
+      fillBlurButton: this.selector('.tie-fill-blur-button'),
       strokeRange: new Range(
         {
           slider: this.selector('.tie-stroke-range'),
@@ -90,7 +95,10 @@ class Shape extends Submenu {
     this.eventHandler.shapeTypeSelected = this._changeShapeHandler.bind(this);
     this.actions = actions;
 
+    this.eventHandler.fillBlurToggled = this._changeFillBlurHandler.bind(this);
+
     this._els.shapeSelectButton.addEventListener('click', this.eventHandler.shapeTypeSelected);
+    this._els.fillBlurButton.addEventListener('click', this.eventHandler.fillBlurToggled);
     this._els.strokeRange.on('change', this._changeStrokeRangeHandler.bind(this));
     this._els.fillColorpicker.on('change', this._changeFillColorHandler.bind(this));
     this._els.strokeColorpicker.on('change', this._changeStrokeColorHandler.bind(this));
@@ -113,6 +121,7 @@ class Shape extends Submenu {
    */
   _removeEvent() {
     this._els.shapeSelectButton.removeEventListener('click', this.eventHandler.shapeTypeSelected);
+    this._els.fillBlurButton.removeEventListener('click', this.eventHandler.fillBlurToggled);
     this._els.strokeRange.off();
     this._els.fillColorpicker.off();
     this._els.strokeColorpicker.off();
@@ -132,14 +141,25 @@ class Shape extends Submenu {
    * @param {Object} options - options of shape status
    *   @param {string} strokeWidth - stroke width
    *   @param {string} strokeColor - stroke color
-   *   @param {string} fillColor - fill color
+   *   @param {(ShapeFillOption | string)} fillColor - fill option, as reported by
+   *    {@link Shape#makeFillPropertyForUserEvent} ({type: 'color', color} or {type: 'filter', filter})
    */
   setShapeStatus({ strokeWidth, strokeColor, fillColor }) {
     this._els.strokeRange.value = strokeWidth;
     this._els.strokeColorpicker.color = strokeColor;
-    this._els.fillColorpicker.color = fillColor;
+
+    const isFillBlur = !!fillColor && fillColor.type === SHAPE_FILL_TYPE.FILTER;
+    this.isFillBlur = isFillBlur;
+    this._getFillBlurButtonElement().classList.toggle('active', isFillBlur);
+
+    const fillOption = isFillBlur ? fillColor : fillColor && fillColor.color;
+
+    if (!isFillBlur) {
+      this._els.fillColorpicker.color = fillOption;
+    }
+
     this.options.stroke = strokeColor;
-    this.options.fill = fillColor;
+    this.options.fill = fillOption;
     this.options.strokeWidth = strokeWidth;
 
     this.actions.setDrawingShape(this.type, { strokeWidth });
@@ -242,10 +262,44 @@ class Shape extends Submenu {
    */
   _changeFillColorHandler(color) {
     color = color || 'transparent';
+    this.isFillBlur = false;
+    this._getFillBlurButtonElement().classList.remove('active');
     this.options.fill = color;
     this.actions.changeShape({
       fill: color,
     });
+  }
+
+  /**
+   * Toggle a blurred-fill (the shape fill shows a blurred version of what's
+   * underneath, instead of a flat color) on or off for the current shape.
+   * @param {object} event - click event
+   * @private
+   */
+  _changeFillBlurHandler(event) {
+    const button = event.target.closest('.tui-image-editor-button');
+    if (!button) {
+      return;
+    }
+
+    this.isFillBlur = !this.isFillBlur;
+    button.classList.toggle('active', this.isFillBlur);
+
+    const fill = this.isFillBlur
+      ? { type: SHAPE_FILL_TYPE.FILTER, filter: [{ blur: FILL_BLUR_VALUE }] }
+      : this._els.fillColorpicker.color || 'transparent';
+
+    this.options.fill = fill;
+    this.actions.changeShape({ fill });
+  }
+
+  /**
+   * Get the fill-blur toggle button element.
+   * @returns {HTMLElement}
+   * @private
+   */
+  _getFillBlurButtonElement() {
+    return this._els.fillBlurButton.querySelector('.tui-image-editor-button');
   }
 
   /**
